@@ -409,8 +409,6 @@ namespace RestSharp
 		/// </summary>
 		public ICredentials Credentials { get; set; }
 
-        public IWebProxy Proxy { get; set; }
-
 		/// <summary>
 		/// Timeout in milliseconds to be used for the request. This timeout value overrides a timeout set on the RestClient.
 		/// </summary>
@@ -420,8 +418,6 @@ namespace RestSharp
         /// MaxAutomaticRedirections
         /// </summary>
         public int? MaxAutomaticRedirects { get; set; }
-
-        public CookieContainer CookieContainer { get; set; }
 
 		private int _attempts;
 
@@ -444,5 +440,13 @@ namespace RestSharp
 		{
 			get { return _attempts; }
 		}
+
+        // Explicity implementing this interface property hides it 
+        // from the public API unless explicity cast to an IRestRequest
+        IWebProxy IRestRequest.Proxy { get; set; }
+
+        public CookieContainer CookieContainer { get; set; }
+
+
 	}
 }

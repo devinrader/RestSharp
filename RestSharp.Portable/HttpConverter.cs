@@ -10,6 +10,8 @@ namespace RestSharp
     {
         public IHttpRequest ConvertTo(IRestClient restClient, IRestRequest request)
         {
+            MergeClientProperties(restClient, request);
+
             var http = new HttpRequest();
 
             http.AlwaysMultipartFormData = request.AlwaysMultipartFormData;
@@ -58,7 +60,7 @@ namespace RestSharp
             }
 
             var cookies = request.Parameters
-                            .Where(p => p.Type == ParameterType.HttpHeader)
+                            .Where(p => p.Type == ParameterType.Cookie)
                             .Select(p => new HttpCookie() { Name = p.Name, Value = p.Value.ToString() });
             
             foreach (var cookie in cookies)
@@ -85,8 +87,8 @@ namespace RestSharp
             if (body != null)
             {
                 object val = body.Value;
-                if (val is byte[])
-                    http.RequestBodyBytes = (byte[])val;
+                if (val is byte[]) //NOTE: Is hitting this even possible?  Does not seem like it because it seems like we always try to serialize the body
+                    http.RequestBodyBytes = (byte[])val;  
                 else
                     http.RequestBody = body.Value.ToString();
                 http.RequestContentType = body.Name;
@@ -108,19 +110,25 @@ namespace RestSharp
                 restRequest.AddParameter(p);
             }
 
+            //NOTE: Seems like this is duplicate work.  The Accept header is already getting
+            // set in the AddHandler method in RestClient.  No need to add it a second time?
+
             // Add Accept header based on registered deserializers if none has been set by the caller.
-            if (restRequest.Parameters.All(p2 => p2.Name.ToLowerInvariant() != "accept"))
-            {
-                var accepts = string.Join(", ", restClient.DefaultAcceptTypes.ToArray());
-                restRequest.AddParameter("Accept", accepts, ParameterType.HttpHeader);
-            }
+            //if (restRequest.Parameters.All(p2 => p2.Name.ToLowerInvariant() != "accept"))
+            //{
+            //    var accepts = string.Join(", ", restClient.DefaultAcceptTypes.ToArray());
+            //    restRequest.AddParameter("Accept", accepts, ParameterType.HttpHeader);
+            //}
 
             if (restClient.FollowRedirects && restClient.MaxRedirects.HasValue)
             {
                 restRequest.MaxAutomaticRedirects = restClient.MaxRedirects.Value;
             }
 
-            restRequest.Proxy = restClient.Proxy;
+            if (restClient.Proxy != null)
+            {
+                restRequest.Proxy = restClient.Proxy;
+            }
 
             restRequest.CookieContainer = restClient.CookieContainer;
 

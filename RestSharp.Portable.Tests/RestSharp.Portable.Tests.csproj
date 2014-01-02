@@ -96,8 +96,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileParameterComparer.cs" />
+    <Compile Include="ParameterComperer.cs" />
+    <Compile Include="RestResponseCookieComparer.cs" />
     <Compile Include="RestSharp_Authenticators\When_Configuring_Basic_Authentication.cs" />
     <Compile Include="RestSharp_Authenticators\When_Configuring_Simple_Authentication.cs" />
+    <Compile Include="RestSharp_HttpConverter\When_Converting_From_An_HttpResponse.cs" />
+    <Compile Include="RestSharp_HttpConverter\When_Converting_To_An_HttpRequest.cs" />
+    <Compile Include="RestSharp_RestClient\When_Configuring_A_RestClient.cs" />
     <Compile Include="RestSharp_RestRequest\When_Configuring_A_RestRequest.cs" />
     <Compile Include="RestSharp_Http\When_Configuring_A_MessageHandler.cs" />
     <Compile Include="SampleClasses\EmployeeTracker.cs" />
@@ -129,6 +135,7 @@
     <Compile Include="RestSharp_Deserializers_Xml\XmlSerializerTests.cs" />
     <Compile Include="UrlBuilderTests.cs" />
     <Compile Include="RestSharp_Deserializers_Xml\XmlDeserializerTests.cs" />
+    <Compile Include="XUnitExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SampleData\4sq.txt">
@@ -240,9 +247,7 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="RestSharp_RestClient\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

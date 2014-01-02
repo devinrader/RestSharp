@@ -104,8 +104,6 @@ namespace RestSharp
 		/// </summary>
 		ICredentials Credentials { get; set; }
 
-        IWebProxy Proxy { get; set; }
-
 		/// <summary>
 		/// Timeout in milliseconds to be used for the request. This timeout value overrides a timeout set on the RestClient.
 		/// </summary>
@@ -236,6 +234,9 @@ namespace RestSharp
 		IRestRequest AddUrlSegment(string name, string value);
 
 		Action<IRestResponse> OnBeforeDeserialization { get; set; }
-		void IncreaseNumAttempts();
+
+        void IncreaseNumAttempts();
+
+        IWebProxy Proxy { get; set; }
 	}
 }

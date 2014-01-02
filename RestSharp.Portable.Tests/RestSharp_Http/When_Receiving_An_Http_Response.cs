@@ -34,6 +34,7 @@ namespace RestSharp.Tests
             //cookies
 
             //headers
+            AssertExtensions.Incomplete();
         }
     }
 }

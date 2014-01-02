@@ -130,8 +130,6 @@ namespace RestSharp
 
             var httpResponse = new HttpResponse();
 
-            //token.ThrowIfCancellationRequested();
-
             try
             {
                 var responseMessage = await this._client.Instance.SendAsync(this._message.Instance, token);

@@ -15,18 +15,38 @@ namespace RestSharp.Tests
     public class When_Making_An_Http_Request
     {
         [Fact]
-        public async void Then_Receive_An_OK_HttpResponse()
+        public async void Using_GET_Then_Receive_An_OK_HttpResponse()
         {
             var request = new HttpRequest();
             request.Url = new Uri("http://www.example.com");
 
-            //var handler = new FakeDefaultMessageHandler(() => {
-            //    return new HttpResponseMessage(HttpStatusCode.OK);
-            //});
+            var handler = new FakeDefaultMessageHandler(() =>
+            {
+                return new HttpResponseMessage(HttpStatusCode.OK);
+            });
 
-            Http http = new Http(request); //, handler, new DefaultRequestMessage(), new HttpClientWrapper(handler));
+            Http http = new Http(request, handler, new DefaultRequestMessage(), new HttpClientWrapper(handler));
 
             var result = await http.AsGetAsync(HttpMethod.Get, CancellationToken.None);
+
+            Assert.IsType<HttpResponse>(result);
+            Assert.Equal(ResponseStatus.Completed, result.ResponseStatus);
+        }
+
+        [Fact]
+        public async void Using_POST_Then_Receive_An_OK_HttpResponse()
+        {
+            var request = new HttpRequest();
+            request.Url = new Uri("http://www.example.com");
+
+            var handler = new FakeDefaultMessageHandler(() =>
+            {
+                return new HttpResponseMessage(HttpStatusCode.OK);
+            });
+
+            Http http = new Http(request, handler, new DefaultRequestMessage(), new HttpClientWrapper(handler));
+
+            var result = await http.AsPostAsync(HttpMethod.Post, CancellationToken.None);
 
             Assert.IsType<HttpResponse>(result);
             Assert.Equal(ResponseStatus.Completed, result.ResponseStatus);
@@ -108,7 +128,7 @@ namespace RestSharp.Tests
             Assert.Equal(ResponseStatus.TimedOut, result.ResponseStatus);
         }
 
-        //[Fact]
+        //  [Fact]
         public async void Then_Receive_An_HttpResponse_With_Error_Details_When_Request_Is_Canceled()
         {
             var request = new HttpRequest();
