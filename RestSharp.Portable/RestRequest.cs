@@ -148,6 +148,31 @@ namespace RestSharp
 			return AddFile(FileParameter.Create(name, bytes, fileName, contentType));
 		}
 
+        /// <summary>
+        /// Adds the bytes to the Files collection with the specified file name and content type
+        /// </summary>
+        /// <param name="name">The parameter name to use in the request</param>
+        /// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
+        /// <param name="fileName">The file name to use for the uploaded file</param>
+        /// <returns>This request</returns>
+        public IRestRequest AddFile(string name, Action<Stream> writer, string fileName)
+        {
+            return AddFile(name, writer, fileName, null);
+        }
+
+        /// <summary>
+        /// Adds the bytes to the Files collection with the specified file name and content type
+        /// </summary>
+        /// <param name="name">The parameter name to use in the request</param>
+        /// <param name="writer">A function that writes directly to the stream.  Should NOT close the stream.</param>
+        /// <param name="fileName">The file name to use for the uploaded file</param>
+        /// <param name="contentType">The MIME type of the file to upload</param>
+        /// <returns>This request</returns>
+        public IRestRequest AddFile(string name, Action<Stream> writer, string fileName, string contentType)
+        {
+            return AddFile(new FileParameter { Name = name, Writer = writer, FileName = fileName, ContentType = contentType });
+        }
+
 		private IRestRequest AddFile (FileParameter file)
 		{
 			Files.Add(file);

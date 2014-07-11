@@ -15,7 +15,9 @@
 #endregion
 
 using System;
+using System.Text;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using RestSharp.Deserializers;
@@ -418,6 +420,72 @@ namespace RestSharp
         //        Authenticator.Authenticate(client, request);
         //    }
         //}
+        /// <summary>
+        /// Assembles URL to call based on parameters, method and resource
+        /// </summary>
+        /// <param name="request">RestRequest to execute</param>
+        /// <returns>Assembled System.Uri</returns>
+       
+        public Uri BuildUri(IRestRequest request)
+        {
+            var assembled = request.Resource;
+            var urlParms = request.Parameters.Where(p => p.Type == ParameterType.UrlSegment);
+            foreach (var p in urlParms)
+            {
+                assembled = assembled.Replace("{" + p.Name + "}", p.Value.ToString().UrlEncode());
+            }
+
+            if (!string.IsNullOrEmpty(assembled) && assembled.StartsWith("/"))
+            {
+                assembled = assembled.Substring(1);
+            }
+
+            if (!string.IsNullOrEmpty(BaseUrl))
+            {
+                if (string.IsNullOrEmpty(assembled))
+                {
+                    assembled = BaseUrl;
+                }
+                else
+                {
+                    assembled = string.Format("{0}/{1}", BaseUrl, assembled);
+                }
+            }
+
+            IEnumerable<Parameter> parameters = null;
+
+            if (request.Method != Method.POST && request.Method != Method.PUT && request.Method != Method.PATCH)
+            {
+                // build and attach querystring if this is a get-style request
+                parameters = request.Parameters.Where(p => p.Type == ParameterType.GetOrPost || p.Type == ParameterType.QueryString);
+            }
+            else
+            {
+                parameters = request.Parameters.Where(p => p.Type == ParameterType.QueryString);
+            }
+
+            // build and attach querystring 
+            if (parameters != null && parameters.Any())
+            {
+                var data = EncodeParameters(parameters);
+                assembled = string.Format("{0}?{1}", assembled, data);
+            }
+
+            return new Uri(assembled);
+        }
+
+        private static string EncodeParameters(IEnumerable<Parameter> parameters)
+        {
+            var querystring = new StringBuilder();
+            foreach (var p in parameters)
+            {
+                if (querystring.Length > 1)
+                    querystring.Append("&");
+                querystring.AppendFormat("{0}={1}", p.Name.UrlEncode(), (p.Value.ToString()).UrlEncode());
+            }
+
+            return querystring.ToString();
+        }
 
         private static async Task<HttpResponse> DoAsGetAsync(IHttp http, HttpMethod method, CancellationToken token)
         {
