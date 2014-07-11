@@ -46,6 +46,10 @@ namespace RestSharp
 		/// </summary>
 		public long ContentLength { get; set; }
         /// <summary>
+        /// Provides raw data for file
+        /// </summary>
+        public Action<Stream> Writer { get; set; }
+        /// <summary>
         /// Provides the raw byte array of the file
         /// </summary>
         public byte[] Data { get; set; }
